@@ -1,15 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import routes from './routes';
 
-function App() {
-
+export default function App() {
   return (
-    <div className='min-h-screen bg-black text-white flex justify-center'>
-      Avail
+    <div className="min-h-screen" style={{ background: 'var(--bg-gradient-app)' }}>
+    <Routes>
+      {routes.map(r => (
+        <Route key={r.path} path={r.path} element={r.element} />
+      ))}
+    </Routes>
     </div>
-  )
+  );
 }
-
-export default App
