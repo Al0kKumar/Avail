@@ -1,24 +1,106 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { createBooking } from '../features/booking/bookings.api';
+import { getPublicAvailability } from '../features/availability/availability.api';
+import { getPublicUserBySlug } from '../features/user/user.api';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0 },
 };
 
-// MOCK DATA (UI only)
-const MOCK_SLOTS = [
-  '10:00 AM',
-  '10:30 AM',
-  '11:00 AM',
-  '02:00 PM',
-  '02:30 PM',
-  '03:00 PM',
-];
-
 export default function PublicBooking() {
-  const [selectedDate, setSelectedDate] = useState('');
+  const { slug } = useParams();
+  const navigate = useNavigate();
+
+  const [host, setHost] = useState(null);
+
+  const [date, setDate] = useState('');
+  const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const [guestName, setGuestName] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
+
+  const timezone =
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  /* ---------------- HOST RESOLUTION ---------------- */
+
+  useEffect(() => {
+    const fetchHost = async () => {
+      try {
+        const data = await getPublicUserBySlug(slug);
+        setHost(data);
+      } catch (err) {
+        console.error(err);
+        alert('User not found');
+      }
+    };
+
+    fetchHost();
+  }, [slug]);
+
+  /* ---------------- AVAILABILITY ---------------- */
+
+  useEffect(() => {
+    if (!host || !date) return;
+
+    const fetchSlots = async () => {
+      setLoading(true);
+      try {
+        const data = await getPublicAvailability({
+          userId: host.id,
+          date,
+          timezone,
+        });
+
+        setSlots(data.slots);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSlots();
+  }, [host, date, timezone]);
+
+  const formatTime = utc =>
+    new Date(utc).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+  /* ---------------- CREATE BOOKING ---------------- */
+
+  const handleBooking = async () => {
+    if (!guestName || !guestEmail) {
+      alert('Please enter your name and email');
+      return;
+    }
+
+    try {
+      await createBooking({
+        hostUserId: host.id,
+        startTimeUTC: selectedSlot.startUTC,
+        endTimeUTC: selectedSlot.endUTC,
+        guestName,
+        guestEmail,
+        guestTimezone: timezone,
+      });
+
+      navigate(`/${host.publicSlug}/success`);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to book slot');
+    }
+  };
+
+  /* ---------------- UI ---------------- */
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-20">
@@ -37,105 +119,143 @@ export default function PublicBooking() {
           p-10
         "
       >
-        {/* HEADER */}
+        {/* Header */}
         <div className="mb-10 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(34,197,94,0.8)]" />
-            <span className="text-sm text-white/60">Avail</span>
-          </div>
-
           <h1 className="text-3xl font-semibold tracking-tight text-white">
-            Book time with Alok
+            Book a meeting with {host?.name}
           </h1>
-
           <p className="mt-2 text-white/60">
-            Pick a date and time that works for you.
+            Choose a date and time that works for you.
           </p>
         </div>
 
-        {/* CONTENT */}
         <div className="grid md:grid-cols-2 gap-10">
-          {/* DATE PICKER */}
+          {/* Date */}
           <div>
-            <h3 className="text-sm font-medium text-white mb-3">
-              Select a date
+            <h3 className="text-sm text-white mb-3">
+              Select date
             </h3>
-
             <input
               type="date"
-              value={selectedDate}
+              value={date}
               onChange={e => {
-                setSelectedDate(e.target.value);
+                setDate(e.target.value);
                 setSelectedSlot(null);
               }}
               className="
-                w-full
-                bg-white/10
-                text-white
-                rounded-xl
-                px-4 py-3
+                w-full rounded-xl px-4 py-3
+                bg-white/10 text-white
                 border border-white/10
-                focus:outline-none
               "
             />
           </div>
 
-          {/* TIME SLOTS */}
+          {/* Slots */}
           <div>
-            <h3 className="text-sm font-medium text-white mb-3">
+            <h3 className="text-sm text-white mb-3">
               Available times
             </h3>
 
-            {!selectedDate ? (
+            {!date && (
               <p className="text-white/40 text-sm">
-                Select a date to see available times.
+                Select a date first
               </p>
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
-                {MOCK_SLOTS.map(slot => (
+            )}
+
+            {loading && (
+              <p className="text-white/40 text-sm">
+                Loading slots…
+              </p>
+            )}
+
+            {!loading && date && slots.length === 0 && (
+              <p className="text-white/40 text-sm">
+                No availability on this date
+              </p>
+            )}
+
+            <div className="grid grid-cols-2 gap-3">
+              {slots.map(slot => {
+                const label = formatTime(slot.startUTC);
+
+                return (
                   <button
-                    key={slot}
+                    key={slot.startUTC}
                     onClick={() => setSelectedSlot(slot)}
                     className={`
-                      rounded-lg px-4 py-3 text-sm transition
-                      border
+                      px-4 py-3 rounded-lg text-sm transition border
                       ${
-                        selectedSlot === slot
+                        selectedSlot?.startUTC === slot.startUTC
                           ? 'bg-emerald-500 text-black border-emerald-400'
                           : 'bg-white/5 text-white border-white/10 hover:bg-white/10'
                       }
                     `}
                   >
-                    {slot}
+                    {label}
                   </button>
-                ))}
-              </div>
-            )}
+                );
+              })}
+            </div>
           </div>
         </div>
 
+        {/* Guest form */}
+        {selectedSlot && (
+          <div className="mt-10 grid gap-4">
+            <div>
+              <label className="block text-sm text-white/70 mb-1">
+                Your name
+              </label>
+              <input
+                type="text"
+                value={guestName}
+                onChange={e => setGuestName(e.target.value)}
+                placeholder="John Doe"
+                className="
+                  w-full px-4 py-3 rounded-xl
+                  bg-white/10 text-white
+                  border border-white/10
+                "
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm text-white/70 mb-1">
+                Email address
+              </label>
+              <input
+                type="email"
+                value={guestEmail}
+                onChange={e => setGuestEmail(e.target.value)}
+                placeholder="john@email.com"
+                className="
+                  w-full px-4 py-3 rounded-xl
+                  bg-white/10 text-white
+                  border border-white/10
+                "
+              />
+            </div>
+          </div>
+        )}
+
         {/* CTA */}
         {selectedSlot && (
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.1 }}
-            className="mt-10 flex justify-end"
-          >
+          <div className="mt-10 flex justify-end">
             <button
-              className="
-                px-6 py-3
-                rounded-xl
-                bg-emerald-500
-                text-black
-                font-medium
-                shadow-lg shadow-emerald-500/25
-              "
+              onClick={handleBooking}
+              disabled={!guestName || !guestEmail}
+              className={`
+                px-6 py-3 rounded-xl transition
+                ${
+                  guestName && guestEmail
+                    ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/25'
+                    : 'bg-white/20 text-white/40 cursor-not-allowed'
+                }
+              `}
             >
-              Continue →
+              Confirm booking →
             </button>
-          </motion.div>
+          </div>
         )}
       </motion.div>
     </div>

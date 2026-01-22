@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Button from '../components/Button';
+import { Link } from 'react-router-dom';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -68,9 +69,11 @@ export default function Landing() {
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
+          <Link to="/login">
             <Button className="px-8 py-4 text-base shadow-lg shadow-emerald-500/25 cursor-pointer">
             Get started
             </Button>
+          </Link>
         </motion.div>
         </motion.div>
 
@@ -211,9 +214,11 @@ export default function Landing() {
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             >
+            <Link to="/login">
             <Button className="px-8 py-4 shadow-lg shadow-emerald-500/25 cursor-pointer">
                 Get started
             </Button>
+            </Link>
             </motion.div>
         </motion.div>
         </section>

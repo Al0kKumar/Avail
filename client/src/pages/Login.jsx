@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import Button from '../components/Button';
+import { loginWithGoogle } from '../features/auth/auth.api';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -8,6 +10,26 @@ const fadeUp = {
 };
 
 export default function Login() {
+  const navigate = useNavigate();
+
+  const googleLogin = useGoogleLogin({
+    flow: 'implicit',
+    onSuccess: async tokenResponse => {
+      try {
+        const { token } = await loginWithGoogle(
+          tokenResponse.id_token
+        );
+
+        localStorage.setItem('token', token);
+        navigate('/dashboard');
+      } catch (err) {
+        console.error(err);
+        alert('Login failed');
+      }
+    },
+  });
+
+
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
       <motion.div
@@ -41,11 +63,7 @@ export default function Login() {
         </Link>
 
         {/* Heading */}
-        <h1
-          className="
-            text-3xl font-semibold tracking-tight text-white
-          "
-        >
+        <h1 className="text-3xl font-semibold tracking-tight text-white">
           Welcome back
         </h1>
 
@@ -53,14 +71,17 @@ export default function Login() {
           Sign in to manage your availability and bookings.
         </p>
 
-        {/* CTA */}
+        {/* CTA — YOUR BUTTON, REAL GOOGLE AUTH */}
         <motion.div
           className="mt-8"
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.97 }}
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
         >
-          <Button className="w-full py-4 shadow-lg shadow-emerald-500/25">
+          <Button
+            className="w-full py-4 cursor-pointer shadow-lg shadow-emerald-500/25"
+            onClick={() => googleLogin()}
+          >
             Continue with Google
           </Button>
         </motion.div>
