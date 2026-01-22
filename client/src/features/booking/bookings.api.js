@@ -6,7 +6,7 @@ export const createBooking = async bookingData => {
 };
 
 export const getMyBookings = async bookingData => {
-  const res = await api.post('/bookings/me', bookingData);
+  const res = await api.get('/bookings/me', bookingData);
   return res.data;
 };
 

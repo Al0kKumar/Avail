@@ -1,21 +1,47 @@
+import { useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0 },
-};
+import Button from '../components/Button';
 
 export default function BookingSuccess() {
+  const { state } = useLocation();
+
+  if (!state) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Invalid booking
+      </div>
+    );
+  }
+
+  const {
+    hostName,
+    guestName,
+    guestEmail,
+    startTime,
+    endTime,
+  } = state;
+
+  const formatDate = date =>
+    new Date(date).toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+  const formatTime = date =>
+    new Date(date).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 py-20">
+    <div className="min-h-screen flex items-center justify-center px-6">
       <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        animate="visible"
-        transition={{ duration: 0.4 }}
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
         className="
-          w-full max-w-md
+          w-full max-w-lg
           rounded-2xl
           bg-white/5
           backdrop-blur-xl
@@ -25,66 +51,35 @@ export default function BookingSuccess() {
           text-center
         "
       >
-        {/* Icon */}
-        <div className="flex justify-center mb-6">
-          <div
-            className="
-              h-14 w-14
-              rounded-full
-              bg-emerald-500/15
-              flex items-center justify-center
-            "
-          >
-            <span className="text-emerald-400 text-2xl">✓</span>
-          </div>
-        </div>
-
-        {/* Heading */}
-        <h1 className="text-3xl font-semibold tracking-tight text-white">
-          You’re booked!
+        <h1 className="text-3xl font-semibold text-white">
+          Booking confirmed 🎉
         </h1>
 
-        <p className="mt-3 text-white/60">
-          Your meeting has been successfully scheduled.
+        <p className="mt-4 text-white/70">
+          You’ve successfully booked a meeting with{' '}
+          <span className="text-white font-medium">
+            {hostName}
+          </span>
+          .
         </p>
 
-        {/* Details */}
-        <div className="mt-8 space-y-3 text-sm">
-          <div className="flex justify-between text-white/60">
-            <span>Date</span>
-            <span className="text-white">Jan 20, 2026</span>
-          </div>
-
-          <div className="flex justify-between text-white/60">
-            <span>Time</span>
-            <span className="text-white">10:30 AM</span>
-          </div>
-
-          <div className="flex justify-between text-white/60">
-            <span>With</span>
-            <span className="text-white">Alok</span>
-          </div>
+        <div className="mt-6 text-white/80">
+          <p>{formatDate(startTime)}</p>
+          <p className="mt-1">
+            {formatTime(startTime)} – {formatTime(endTime)}
+          </p>
         </div>
 
-        {/* Divider */}
-        <div className="my-8 h-px bg-white/10" />
-
-        {/* Footer */}
-        <p className="text-xs text-white/40">
-          A confirmation email has been sent to you.
+        <p className="mt-6 text-sm text-white/50">
+          A confirmation has been sent to{' '}
+          <span className="text-white">{guestEmail}</span>
         </p>
 
-        <Link
-          to="/"
-          className="
-            inline-block mt-6
-            text-sm
-            text-emerald-400
-            hover:text-emerald-300
-          "
-        >
-          Back to home
-        </Link>
+        <div className="mt-8">
+          <Link to="/">
+            <Button>Back to home</Button>
+          </Link>
+        </div>
       </motion.div>
     </div>
   );

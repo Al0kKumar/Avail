@@ -28,6 +28,16 @@ export default function PublicBooking() {
   const timezone =
     Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+  /* ---------------- HELPERS ---------------- */
+
+  const todayISO = new Date().toISOString().split('T')[0];
+
+  const isSlotInPast = utcTime => {
+    const now = new Date();
+    const slotTime = new Date(utcTime);
+    return slotTime < now;
+  };
+
   /* ---------------- HOST RESOLUTION ---------------- */
 
   useEffect(() => {
@@ -38,11 +48,12 @@ export default function PublicBooking() {
       } catch (err) {
         console.error(err);
         alert('User not found');
+        navigate('/');
       }
     };
 
     fetchHost();
-  }, [slug]);
+  }, [slug, navigate]);
 
   /* ---------------- AVAILABILITY ---------------- */
 
@@ -93,7 +104,15 @@ export default function PublicBooking() {
         guestTimezone: timezone,
       });
 
-      navigate(`/${host.publicSlug}/success`);
+      navigate(`/${host.publicSlug}/success`, {
+        state: {
+          hostName: host.name,
+          guestName,
+          guestEmail,
+          startTime: selectedSlot.startUTC,
+          endTime: selectedSlot.endUTC,
+        },
+      });
     } catch (err) {
       console.error(err);
       alert('Failed to book slot');
@@ -138,6 +157,7 @@ export default function PublicBooking() {
             <input
               type="date"
               value={date}
+              min={todayISO}
               onChange={e => {
                 setDate(e.target.value);
                 setSelectedSlot(null);
@@ -178,14 +198,23 @@ export default function PublicBooking() {
               {slots.map(slot => {
                 const label = formatTime(slot.startUTC);
 
+                const disabled =
+                  date === todayISO &&
+                  isSlotInPast(slot.startUTC);
+
                 return (
                   <button
                     key={slot.startUTC}
-                    onClick={() => setSelectedSlot(slot)}
+                    disabled={disabled}
+                    onClick={() => {
+                      if (!disabled) setSelectedSlot(slot);
+                    }}
                     className={`
                       px-4 py-3 rounded-lg text-sm transition border
                       ${
-                        selectedSlot?.startUTC === slot.startUTC
+                        disabled
+                          ? 'bg-white/5 text-white/30 border-white/5 cursor-not-allowed'
+                          : selectedSlot?.startUTC === slot.startUTC
                           ? 'bg-emerald-500 text-black border-emerald-400'
                           : 'bg-white/5 text-white border-white/10 hover:bg-white/10'
                       }

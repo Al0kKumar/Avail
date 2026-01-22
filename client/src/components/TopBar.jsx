@@ -1,6 +1,17 @@
+import { Link } from 'react-router-dom';
 import Button from './Button';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function Topbar() {
+
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    navigate("/") 
+  }
+
   return (
     <header
       className="
@@ -12,7 +23,7 @@ export default function Topbar() {
         backdrop-blur-xl
       "
     >
-      <Button variant="secondary">Logout</Button>
+      <Button className='cursor-pointer' onClick={logout} variant="secondary">Logout</Button>
     </header>
   );
 }
