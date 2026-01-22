@@ -1,10 +1,8 @@
 import { Router } from 'express';
-import { createUser } from './user.controller.js';
-import { createUserSchema } from './user.schema.js';
-import { validate } from '../../common/validate.js';
+import { getUserByPublicSlug } from './user.controller.js';
 
 const router = Router();
 
-router.post('/', validate(createUserSchema) ,createUser);
+router.get('/public/slug/:slug', getUserByPublicSlug);
 
 export default router;

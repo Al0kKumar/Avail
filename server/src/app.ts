@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import 'express-async-errors';
+//import 'express-async-errors';
 import { errorHandler } from './common/error.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import userRoutes from './modules/users/user.routes.js';

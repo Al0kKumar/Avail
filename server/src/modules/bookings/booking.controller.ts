@@ -138,3 +138,18 @@ export const createBooking = asyncHandler(
     }
   }
 );
+
+
+export const getMyBookings = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user!.userId;
+
+    const bookings = await Booking.find({
+      hostUserId: userId,
+    })
+      .sort({ startTimeUTC: 1 })
+      .lean();
+
+    res.json(bookings);
+  }
+);
