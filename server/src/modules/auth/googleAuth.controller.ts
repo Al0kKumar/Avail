@@ -1,44 +1,22 @@
 import { OAuth2Client } from 'google-auth-library';
-import axios from 'axios';
 import type { Request, Response } from 'express';
 
 import { User } from '../users/user.model.js';
 import { signJwt } from '../../config/jwt.js';
 import { env } from '../../config/env.js';
 
-const client = new OAuth2Client(
-  env.GOOGLE_CLIENT_ID,
-  env.GOOGLE_CLIENT_SECRET
-);
+const client = new OAuth2Client(env.GOOGLE_CLIENT_ID);
 
-export const googleAuthWithCode = async (
-  req: Request,
-  res: Response
-) => {
-  const { code } = req.body;
+export const googleAuth = async (req: Request, res: Response) => {
+  const { idToken } = req.body;
 
-  if (!code) {
-    return res.status(400).json({ message: 'Code is required' });
+  if (!idToken) {
+    return res.status(400).json({ message: 'idToken is required' });
   }
 
-  // 1️⃣ Exchange code for tokens
-  const tokenRes = await axios.post(
-    'https://oauth2.googleapis.com/token',
-    {
-      code,
-      client_id: env.GOOGLE_CLIENT_ID,
-      client_secret: env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: 'postmessage',
-      grant_type: 'authorization_code',
-    }
-  );
-
-  const { id_token } = tokenRes.data;
-
-  // 2️⃣ Verify ID token
   const ticket = await client.verifyIdToken({
-    idToken: id_token,
-    audience: env.GOOGLE_CLIENT_ID, // ✅ now guaranteed string
+    idToken,
+    audience: env.GOOGLE_CLIENT_ID,
   });
 
   const payload = ticket.getPayload();
@@ -47,7 +25,6 @@ export const googleAuthWithCode = async (
     return res.status(401).json({ message: 'Invalid Google token' });
   }
 
-  // 3️⃣ Find or create user
   let user = await User.findOne({ email: payload.email });
 
   if (!user) {
@@ -64,7 +41,6 @@ export const googleAuthWithCode = async (
     });
   }
 
-  // 4️⃣ Issue JWT
   const token = signJwt({
     userId: user._id,
     email: user.email,
