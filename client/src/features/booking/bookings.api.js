@@ -10,4 +10,7 @@ export const getMyBookings = async bookingData => {
   return res.data;
 };
 
+export const cancelBooking = bookingId => {
+  return api.patch(`/bookings/${bookingId}/cancel`);
+};
 
