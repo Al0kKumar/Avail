@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Button from './Button';
 import { useNavigate } from 'react-router-dom';
-
+import { motion } from 'framer-motion';
 
 export default function Topbar() {
 
@@ -23,7 +23,26 @@ export default function Topbar() {
         backdrop-blur-xl
       "
     >
-      <Button className='cursor-pointer' onClick={logout} variant="secondary">Logout</Button>
+      <motion.button
+        whileHover={{ y: -1 }}
+        whileTap={{ scale: 0.97 }}
+        onClick={logout}
+        className="
+          px-4 py-2
+          rounded-xl
+          cursor-pointer
+          text-sm font-medium
+          text-white/70
+          border border-white/10
+          hover:border-red-400/40
+          hover:text-red-300
+          hover:bg-red-500/10
+          transition
+        "
+      >
+        Logout
+      </motion.button>
+
     </header>
   );
 }

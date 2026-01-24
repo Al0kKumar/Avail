@@ -17,3 +17,10 @@ export const getPublicAvailability = async ({
 
   return res.data;
 };
+
+
+
+export const saveAvailability = async payload => {
+  const res = await api.post('/availability', payload);
+  return res.data;
+};

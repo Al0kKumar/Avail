@@ -5,10 +5,12 @@ import {
   getMyBookings,
   cancelBooking,
 } from '../../features/booking/bookings.api';
+import Toast from '../../components/Toast';
 
 export default function Bookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState(null);
 
   const handleCancel = async bookingId => {
     if (!confirm('Cancel this booking?')) return;
@@ -25,8 +27,11 @@ export default function Bookings() {
         )
       );
     } catch (err) {
-      alert('Failed to cancel booking');
+      setToast({ type: 'error', message: 'Failed to cancel booking' });
     }
+    finally {
+    setTimeout(() => setToast(null), 2000);
+  }
   };
 
   useEffect(() => {
@@ -55,6 +60,8 @@ export default function Bookings() {
 
   return (
     <DashboardLayout>
+      <Toast show={!!toast} type={toast?.type} message={toast?.message} />
+
       <h1 className="text-3xl font-semibold text-white">
         Bookings
       </h1>
@@ -129,6 +136,7 @@ export default function Bookings() {
                         handleCancel(booking._id)
                       }
                       className="
+                        cursor-pointer
                         text-sm
                         text-red-400
                         hover:text-red-300

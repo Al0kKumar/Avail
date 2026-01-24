@@ -77,7 +77,7 @@ export default function BookingSuccess() {
 
         <div className="mt-8">
           <Link to="/">
-            <Button>Back to home</Button>
+            <Button className='cursor-pointer'>Back to home</Button>
           </Link>
         </div>
       </motion.div>

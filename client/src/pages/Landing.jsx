@@ -2,6 +2,28 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Button from '../components/Button';
 import { Link } from 'react-router-dom';
+import cars24 from '/cars24.avif'
+import doordash from '/doordash.svg'
+import dropbox from '/dropbox.svg'
+import loreal from '/loreal.svg'
+import matrimoney from '/matrimoney.avif'
+import noise from '/noise.avif'
+import razorpay from '/razorpay.webp'
+import snapdeal from '/sanpdeal.png'
+import royal_enfield from '/royal_enfiled.avif'
+
+
+const logos = [
+  {src: cars24 }, 
+  {src: doordash}, 
+  {src: dropbox}, 
+  {src: loreal}, 
+  {src: noise, dark: true},
+  {src: snapdeal, dark: true},
+  {src: razorpay},
+  {src: matrimoney},
+  {src: royal_enfield}
+];
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -79,8 +101,76 @@ export default function Landing() {
 
       </section>
 
-      {/* HOW IT WORKS */}
 
+
+      {/* TRUSTED BY */}
+      <section className="relative py-24 overflow-hidden">
+        {/* soft divider glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'linear-gradient(to bottom, transparent, rgba(34,197,94,0.08), transparent)',
+            }}
+          />
+        </div>
+
+        <div className="relative max-w-6xl mx-auto px-8">
+          <p className="text-center text-sm tracking-wide text-white/50 mb-10">
+            TRUSTED BY TEAMS AT
+          </p>
+
+          {/* marquee */}
+          <div className="relative overflow-hidden">
+                      <motion.div
+            className="flex items-center gap-20"
+            animate={{ x: ['0%', '-100%'] }}
+            transition={{
+              duration: 40,
+              ease: 'linear',
+              repeat: Infinity,
+            }}
+          >
+            {[...logos, ...logos].map((logo, i) => (
+              <div
+                key={i}
+                className="
+                  flex items-center justify-center
+                  min-w-[160px]
+                  opacity-85
+                  transition
+                  duration-300
+                  hover:opacity-100
+                "
+              >
+                <img
+                  src={logo.src}
+                  alt="brand logo"
+                  className={`
+                    h-8 object-contain
+                    transition duration-300
+                    ${
+                      logo.dark
+                        ? 'brightness-150 contrast-110'
+                        : ''
+                    }
+                    hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.35)]
+                  `}
+                />
+              </div>
+            ))}
+          </motion.div>
+
+          </div>
+        </div>
+      </section>
+
+
+
+
+
+      {/* HOW IT WORKS */}
       <section className="relative max-w-6xl mx-auto px-8 py-32">
   {/* ambient green wash for this section */}
   <div className="absolute inset-0 pointer-events-none">
@@ -144,7 +234,7 @@ export default function Landing() {
       </motion.div>
     ))}
   </div>
-</section>
+      </section>
 
 
 
@@ -222,6 +312,166 @@ export default function Landing() {
             </motion.div>
         </motion.div>
         </section>
+
+
+
+      {/* FOOTER */}
+      <footer className="relative mt-32 border-t border-white/10">
+        {/* ambient glow */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(40% 30% at 50% 0%, rgba(34,197,94,0.08), transparent 70%)',
+            }}
+          />
+        </div>
+
+        {/* subtle noise texture */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-[0.035]"
+          style={{
+            backgroundImage:
+              'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
+          }}
+        />
+
+        {/* MAIN CONTENT */}
+        <div className="relative max-w-6xl mx-auto px-8 py-16">
+          <div className="grid md:grid-cols-3 gap-12">
+            {/* BRAND */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(34,197,94,0.8)]" />
+                <span className="text-white font-semibold tracking-tight">
+                  Avail
+                </span>
+              </div>
+
+              <p className="text-sm text-white/50 leading-relaxed max-w-xs">
+                A modern scheduling tool to share availability and book meetings
+                without back-and-forth.
+              </p>
+            </div>
+
+            {/* PRODUCT */}
+            <div>
+              <h4 className="text-sm font-medium text-white mb-3 px-3.5">
+                Product
+              </h4>
+
+              <ul className="space-y-2 text-sm">
+                {[
+                  { label: 'Dashboard', to: '/dashboard' },
+                  { label: 'Availability', to: '/dashboard/availability' },
+                  { label: 'Bookings', to: '/dashboard/bookings' },
+                ].map(item => (
+                  <li key={item.label}>
+                    <Link
+                      to={item.to}
+                      className="
+                        group
+                        inline-flex items-center gap-2
+                        text-white/50
+                        hover:text-white
+                        transition
+                      "
+                    >
+                      {/* dot placeholder — ALWAYS present */}
+                      <span
+                        className="
+                          h-1.5 w-1.5 rounded-full
+                          bg-emerald-400
+                          opacity-0 scale-0
+                          group-hover:opacity-100 group-hover:scale-100
+                          transition-all duration-300
+                        "
+                      />
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+
+            </div>
+
+            {/* CONNECT */}
+            <div>
+              <h4 className="text-sm font-medium text-white mb-3 px-3.5">
+                Connect
+              </h4>
+
+              <ul className="space-y-2 text-sm">
+            {[
+              {
+                label: 'GitHub',
+                href: 'https://github.com/Al0kKumar',
+              },
+              {
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/in/alok-kumar-sde',
+              },
+            ].map(item => (
+              <li key={item.label}>
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="
+                    group
+                    inline-flex items-center gap-2
+                    text-white/50
+                    hover:text-white
+                    transition
+                  "
+                >
+                  {/* SAME dot, same spacing */}
+                  <span
+                    className="
+                      h-1.5 w-1.5 rounded-full
+                      bg-emerald-400
+                      opacity-0 scale-0
+                      group-hover:opacity-100 group-hover:scale-100
+                      transition-all duration-300
+                    "
+                  />
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+
+            </div>
+          </div>
+        </div>
+
+        {/* BOTTOM BAR */}
+        <div className="border-t border-white/10 py-6">
+          <div className="max-w-6xl mx-auto px-8 flex flex-col items-center gap-1 text-center">
+            <p className="text-xs text-white/40">
+              © {new Date().getFullYear()} Avail. All rights reserved.
+            </p>
+
+            <p className="text-xs text-white/30">
+              Built by{' '}
+              <a
+                href="https://alok619.vercel.app/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-white/60 hover:text-emerald-400 transition"
+              >
+                Alok
+              </a>
+            </p>
+          </div>
+        </div>
+      </footer>
+
+
+
     </div>
   );
 }

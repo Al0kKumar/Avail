@@ -1,58 +1,3 @@
-// import { useEffect, useState } from 'react';
-// import { Link } from 'react-router-dom';
-// import { motion } from 'framer-motion';
-// import Button from './Button';
-
-// export default function Navbar() {
-//   const [scrolled, setScrolled] = useState(false);
-
-//   useEffect(() => {
-//     const onScroll = () => setScrolled(window.scrollY > 20);
-//     window.addEventListener('scroll', onScroll);
-//     return () => window.removeEventListener('scroll', onScroll);
-//   }, []);
-
-//   return (
-//     <motion.nav
-//       initial={false}
-//       animate={{
-//         backgroundColor: scrolled
-//           ? 'rgba(15, 23, 42, 0.75)' // dark slate glass
-//           : 'rgba(15, 23, 42, 0.35)',
-//         backdropFilter: 'blur(16px)',
-//         boxShadow: scrolled
-//           ? '0 10px 40px rgba(0,0,0,0.4)'
-//           : 'none',
-//       }}
-//       transition={{ duration: 0.25, ease: 'easeOut' }}
-//       className="
-//         fixed top-6 left-1/2 -translate-x-1/2
-//         z-50
-//         w-[92%] max-w-5xl
-//         rounded-2xl
-//         border border-white/10
-//       "
-//     >
-//       <div className="flex items-center justify-between px-6 py-4">
-//         {/* LOGO */}
-//         <Link
-//           to="/"
-//           className="text-lg font-semibold text-white tracking-wide"
-//         >
-//           Avail
-//         </Link>
-
-//         {/* CTA */}
-//         <Link to="/login">
-//           <Button variant="secondary">Sign in</Button>
-//         </Link>
-//       </div>
-//     </motion.nav>
-//   );
-// }
-
-
-
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -125,8 +70,25 @@ export default function Navbar() {
 
         {/* CTA */}
         <Link to="/login">
-          <Button className='cursor-pointer' variant="secondary">Sign in</Button>
-        </Link>
+        <motion.button
+          whileHover={{ y: -1 }}
+          whileTap={{ scale: 0.97 }}
+          className="
+            px-4 py-2
+            rounded-xl
+            cursor-pointer
+            text-sm font-medium
+            text-emerald-300
+            border border-emerald-400/30
+            hover:border-emerald-400
+            hover:bg-emerald-400/10
+            transition
+          "
+        >
+    Sign in
+  </motion.button>
+</Link>
+
       </div>
     </motion.nav>
   );

@@ -14,17 +14,17 @@ const routes = [
   {
     path: '/dashboard',
     element: (
-      // <ProtectedRoute>
+      <ProtectedRoute>
         <DashboardHome />
-      //  {/* </ProtectedRoute> */}
+      </ProtectedRoute>
     ),
   },
   {
     path: '/dashboard/availability',
     element: (
-      // <ProtectedRoute>
+      <ProtectedRoute>
         <Availability />
-      // </ProtectedRoute>
+      </ProtectedRoute>
     ),
   },
   {
@@ -36,8 +36,9 @@ const routes = [
     ),
   },
 
-  { path: '/:username', element: <PublicBooking /> },
-  { path: '/:username/success', element: <BookingSuccess /> },
+  { path: '/:slug', element: <PublicBooking /> },
+  { path: '/:slug/success', element: <BookingSuccess /> },
+
 ];
 
 export default routes;

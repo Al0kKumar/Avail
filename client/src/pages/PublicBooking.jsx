@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import Toast from '../components/Toast';
 import { createBooking } from '../features/booking/bookings.api';
 import { getPublicAvailability } from '../features/availability/availability.api';
 import { getPublicUserBySlug } from '../features/user/user.api';
@@ -14,6 +14,7 @@ const fadeUp = {
 export default function PublicBooking() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [toast, setToast] = useState(null);
 
   const [host, setHost] = useState(null);
 
@@ -44,10 +45,11 @@ export default function PublicBooking() {
     const fetchHost = async () => {
       try {
         const data = await getPublicUserBySlug(slug);
+        console.log("slug is this : ", slug)
         setHost(data);
       } catch (err) {
         console.error(err);
-        alert('User not found');
+        setToast({ type: 'error', message: 'User not found' });
         navigate('/');
       }
     };
@@ -90,7 +92,8 @@ export default function PublicBooking() {
 
   const handleBooking = async () => {
     if (!guestName || !guestEmail) {
-      alert('Please enter your name and email');
+      setToast({ type: 'error', message: 'Please enter your name and email' });
+      setTimeout(() => setToast(null), 2000);
       return;
     }
 
@@ -114,8 +117,10 @@ export default function PublicBooking() {
         },
       });
     } catch (err) {
-      console.error(err);
-      alert('Failed to book slot');
+      console.error(err); 
+      setToast({ type: 'error', message: 'Failed to book slot' });
+    } finally {
+      setTimeout(() => setToast(null), 2000);
     }
   };
 
@@ -123,6 +128,9 @@ export default function PublicBooking() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 py-20">
+
+      <Toast show={!!toast} type={toast?.type} message={toast?.message} />
+
       <motion.div
         variants={fadeUp}
         initial="hidden"
@@ -274,7 +282,7 @@ export default function PublicBooking() {
               onClick={handleBooking}
               disabled={!guestName || !guestEmail}
               className={`
-                px-6 py-3 rounded-xl transition
+                px-6 py-3 rounded-xl transition cursor-pointer
                 ${
                   guestName && guestEmail
                     ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/25'

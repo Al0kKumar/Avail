@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import Button from '../../components/Button';
+import { saveAvailability } from '../../features/availability/availability.api';
 
 const DAYS = [
   'Monday',
@@ -11,6 +12,16 @@ const DAYS = [
   'Saturday',
   'Sunday',
 ];
+
+const DAY_TO_INDEX = {
+  Sunday: 0,
+  Monday: 1,
+  Tuesday: 2,
+  Wednesday: 3,
+  Thursday: 4,
+  Friday: 5,
+  Saturday: 6,
+};
 
 export default function Availability() {
   const [availability, setAvailability] = useState(
@@ -36,6 +47,41 @@ export default function Availability() {
         i === index ? { ...d, [field]: value } : d
       )
     );
+  };
+
+  const handleSave = async () => {
+    try {
+      const rules = availability
+        .filter(d => d.enabled)
+        .map(d => {
+          if (d.start >= d.end) {
+            throw new Error(
+              `Invalid time range for ${d.day}`
+            );
+          }
+
+          return {
+            dayOfWeek: DAY_TO_INDEX[d.day],
+            startTime: d.start,
+            endTime: d.end,
+            isActive: true,
+          };
+        });
+
+      if (rules.length === 0) {
+        alert('Enable at least one day');
+        return;
+      }
+
+      await saveAvailability({rules});
+      alert('Availability saved');
+    } catch (err) {
+      alert(
+        err instanceof Error
+          ? err.message
+          : 'Failed to save availability'
+      );
+    }
   };
 
   return (
@@ -134,7 +180,9 @@ export default function Availability() {
 
       {/* Save */}
       <div className="mt-10">
-        <Button>Save availability</Button>
+        <Button className='cursor-pointer' onClick={handleSave}>
+          Save availability
+        </Button>
       </div>
     </DashboardLayout>
   );

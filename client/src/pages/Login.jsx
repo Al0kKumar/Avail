@@ -3,9 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import Button from '../components/Button';
 import { loginWithGoogle } from '../features/auth/auth.api';
+import { useState } from 'react';
+import Toast from '../components/Toast';
 
 export default function Login() {
   const navigate = useNavigate();
+  const [toast, setToast] = useState(null);
 
   const handleGoogleSuccess = async credentialResponse => {
     try {
@@ -17,12 +20,18 @@ export default function Login() {
       navigate('/dashboard');
     } catch (err) {
       console.error(err);
-      alert('Login failed');
+      setToast({ type: 'error', message: 'Failed to Signin' });
     }
+    finally {
+    setTimeout(() => setToast(null), 2000);
+  }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
+
+      <Toast show={!!toast} type={toast?.type} message={toast?.message} />
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,6 +75,7 @@ export default function Login() {
         <h1 className="text-3xl font-semibold text-white">
           Welcome back
         </h1>
+
 
         <p className="mt-3 text-white/60 text-sm">
           Sign in to manage your availability and bookings
