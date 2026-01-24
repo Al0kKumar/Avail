@@ -76,7 +76,7 @@ export default function BookingSuccess() {
         </p>
 
         <div className="mt-8">
-          <Link to="/">
+          <Link to="/dashboard">
             <Button className='cursor-pointer'>Back to home</Button>
           </Link>
         </div>

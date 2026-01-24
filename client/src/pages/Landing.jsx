@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Button from '../components/Button';
 import { Link } from 'react-router-dom';
@@ -11,6 +10,8 @@ import noise from '/noise.avif'
 import razorpay from '/razorpay.webp'
 import snapdeal from '/sanpdeal.png'
 import royal_enfield from '/royal_enfiled.avif'
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Calendar, Link2, CheckCircle } from 'lucide-react';
 
 
 const logos = [
@@ -29,6 +30,88 @@ const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
 };
+
+function AnimatedConnector() {
+  const { scrollYProgress } = useScroll({
+    offset: ['start end', 'end start'],
+  });
+
+  const scaleX = useTransform(scrollYProgress, [0.2, 0.6], [0, 1]);
+
+  return (
+    <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 w-[82%] h-px">
+      <motion.div
+        style={{ scaleX }}
+        className="
+          origin-left
+          h-full w-full
+          bg-gradient-to-r
+          from-transparent
+          via-emerald-400/40
+          to-transparent
+        "
+      />
+    </div>
+  );
+}
+
+  function StepCard({ title, desc, icon: Icon, depth }) {
+  const { scrollYProgress } = useScroll({
+    offset: ['start end', 'end start'],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], [0, depth]);
+
+  return (
+    <motion.div
+      style={{ y }}
+      whileHover={{ y: depth - 6 }}
+      transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+      className="group relative"
+    >
+      {/* ICON DOT */}
+      <div className="mb-6 flex justify-center">
+        <div
+          className="
+            relative
+            flex items-center justify-center
+            h-10 w-10 rounded-full
+            bg-emerald-400/15
+            border border-emerald-400/30
+            text-emerald-400
+            shadow-[0_0_18px_rgba(34,197,94,0.35)]
+          "
+        >
+          <Icon size={18} />
+        </div>
+      </div>
+
+      {/* CARD */}
+      <div
+        className="
+          relative
+          p-8
+          rounded-2xl
+          bg-white/5
+          backdrop-blur-xl
+          border border-white/10
+          shadow-lg shadow-black/20
+          transition
+          group-hover:border-emerald-400/30
+        "
+      >
+        <h3 className="text-2xl font-semibold tracking-tight text-white">
+          {title}
+        </h3>
+
+        <p className="mt-4 text-white/60 leading-relaxed">
+          {desc}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 
 export default function Landing() {
   return (
@@ -170,71 +253,49 @@ export default function Landing() {
 
 
 
-      {/* HOW IT WORKS */}
-      <section className="relative max-w-6xl mx-auto px-8 py-32">
-  {/* ambient green wash for this section */}
+
+{/* HOW IT WORKS */}
+<section className="relative max-w-6xl mx-auto px-8 py-36 overflow-hidden">
+  {/* ambient wash */}
   <div className="absolute inset-0 pointer-events-none">
     <div
       className="absolute inset-0"
       style={{
         background:
-          'radial-gradient(50% 40% at 50% 50%, rgba(34,197,94,0.10), transparent 70%)',
+          'radial-gradient(55% 45% at 50% 50%, rgba(34,197,94,0.12), transparent 70%)',
       }}
     />
   </div>
 
-  <div className="relative grid md:grid-cols-3 gap-12 text-center">
+  {/* SCROLL-ANIMATED CONNECTOR */}
+  <AnimatedConnector />
+
+  <div className="relative grid md:grid-cols-3 gap-14 text-center">
     {[
       {
-        step: '01',
         title: 'Connect',
-        desc: 'Sign in with Google and set your availability.',
+        desc: 'Sign in with Google and define your availability.',
+        icon: Calendar,
+        depth: -20,
       },
       {
-        step: '02',
         title: 'Share',
-        desc: 'Send your booking link to anyone.',
+        desc: 'Send your booking link to anyone, instantly.',
+        icon: Link2,
+        depth: -35,
       },
       {
-        step: '03',
         title: 'Meet',
-        desc: 'People pick a time and you’re booked.',
+        desc: 'They pick a time — you’re automatically booked.',
+        icon: CheckCircle,
+        depth: -20,
       },
     ].map((item, i) => (
-      <motion.div
-        key={i}
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        transition={{ delay: i * 0.1 }}
-        whileHover={{ y: -4 }}
-        className="
-          relative
-          p-8
-          rounded-2xl
-          bg-white/5
-          backdrop-blur-xl
-          border border-white/10
-          shadow-lg shadow-black/20
-        "
-      >
-        {/* step indicator */}
-        <div className="mb-6 text-sm font-medium tracking-widest text-emerald-400/80">
-          {item.step}
-        </div>
-
-        <h3 className="text-2xl font-semibold tracking-tight text-white">
-          {item.title}
-        </h3>
-
-        <p className="mt-4 text-white/60 leading-relaxed">
-          {item.desc}
-        </p>
-      </motion.div>
+      <StepCard key={i} {...item} />
     ))}
   </div>
-      </section>
+</section>
+
 
 
 

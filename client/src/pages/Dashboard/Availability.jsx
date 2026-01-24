@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import Button from '../../components/Button';
+import Toast from '../../components/Toast';
 import { saveAvailability } from '../../features/availability/availability.api';
 
 const DAYS = [
@@ -33,6 +34,9 @@ export default function Availability() {
     }))
   );
 
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState(null);
+
   const toggleDay = index => {
     setAvailability(prev =>
       prev.map((d, i) =>
@@ -51,6 +55,8 @@ export default function Availability() {
 
   const handleSave = async () => {
     try {
+      setSaving(true);
+
       const rules = availability
         .filter(d => d.enabled)
         .map(d => {
@@ -69,23 +75,37 @@ export default function Availability() {
         });
 
       if (rules.length === 0) {
-        alert('Enable at least one day');
-        return;
+        throw new Error('Enable at least one day');
       }
 
-      await saveAvailability({rules});
-      alert('Availability saved');
+      await saveAvailability({ rules });
+
+      setToast({
+        type: 'success',
+        message: 'Availability saved successfully',
+      });
     } catch (err) {
-      alert(
-        err instanceof Error
-          ? err.message
-          : 'Failed to save availability'
-      );
+      setToast({
+        type: 'error',
+        message:
+          err instanceof Error
+            ? err.message
+            : 'Failed to save availability',
+      });
+    } finally {
+      setSaving(false);
+      setTimeout(() => setToast(null), 2000);
     }
   };
 
   return (
     <DashboardLayout>
+      <Toast
+        show={!!toast}
+        type={toast?.type}
+        message={toast?.message}
+      />
+
       {/* Header */}
       <h1 className="text-3xl font-semibold tracking-tight text-white">
         Availability
@@ -180,8 +200,19 @@ export default function Availability() {
 
       {/* Save */}
       <div className="mt-10">
-        <Button className='cursor-pointer' onClick={handleSave}>
-          Save availability
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="
+            relative
+            min-w-[200px]
+            cursor-pointer
+          "
+        >
+          {saving && (
+            <span className="absolute left-4 h-4 w-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+          )}
+          {saving ? 'Saving…' : 'Save availability'}
         </Button>
       </div>
     </DashboardLayout>

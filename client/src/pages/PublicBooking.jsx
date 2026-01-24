@@ -23,6 +23,8 @@ export default function PublicBooking() {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const [isBooking, setIsBooking] = useState(false);
+
   const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
 
@@ -98,6 +100,9 @@ export default function PublicBooking() {
     }
 
     try {
+
+      setIsBooking(true);
+
       await createBooking({
         hostUserId: host.id,
         startTimeUTC: selectedSlot.startUTC,
@@ -119,8 +124,9 @@ export default function PublicBooking() {
     } catch (err) {
       console.error(err); 
       setToast({ type: 'error', message: 'Failed to book slot' });
-    } finally {
       setTimeout(() => setToast(null), 2000);
+    } finally {
+      setIsBooking(false);
     }
   };
 
@@ -279,19 +285,25 @@ export default function PublicBooking() {
         {selectedSlot && (
           <div className="mt-10 flex justify-end">
             <button
-              onClick={handleBooking}
-              disabled={!guestName || !guestEmail}
-              className={`
-                px-6 py-3 rounded-xl transition cursor-pointer
-                ${
-                  guestName && guestEmail
-                    ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/25'
-                    : 'bg-white/20 text-white/40 cursor-not-allowed'
-                }
-              `}
-            >
-              Confirm booking →
-            </button>
+            onClick={handleBooking}
+            disabled={!guestName || !guestEmail || isBooking}
+            className={`
+              px-6 py-3 rounded-xl transition
+              flex items-center gap-2
+              cursor-pointer
+              ${
+                !guestName || !guestEmail || isBooking
+                  ? 'bg-white/20 text-white/40 cursor-not-allowed'
+                  : 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/25'
+              }
+            `}
+          >
+            {isBooking && (
+              <span className="h-4 w-4 border-2 border-black/40 border-t-black rounded-full animate-spin" />
+            )}
+            {isBooking ? 'Booking…' : 'Confirm booking →'}
+          </button>
+
           </div>
         )}
       </motion.div>

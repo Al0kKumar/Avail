@@ -21,10 +21,13 @@ export default function DashboardHome() {
 
         const now = new Date();
         const upcoming = bookings.filter(
-          b => new Date(b.startTimeUTC) > now
+          b =>
+            b.status === 'confirmed' &&
+            new Date(b.startTimeUTC) > new Date()
         );
 
         setUpcomingCount(upcoming.length);
+
       } catch (err) {
         console.error(err);
       }

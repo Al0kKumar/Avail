@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const links = [
   { name: 'Dashboard', path: '/dashboard' },
@@ -18,11 +18,11 @@ export default function Sidebar() {
       "
     >
       {/* Brand */}
-      <div className="flex items-center gap-2 mb-12">
+      <div  className="flex items-center gap-2 mb-12">
         <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(34,197,94,0.8)]" />
-        <span className="text-lg font-semibold text-white tracking-tight">
+        <Link to="/" className="text-lg font-semibold text-white cursor-pointer tracking-tight">
           Avail
-        </span>
+        </Link>
       </div>
 
       {/* Nav */}
