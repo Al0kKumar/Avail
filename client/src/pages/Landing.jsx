@@ -12,7 +12,7 @@ import snapdeal from '/sanpdeal.png'
 import royal_enfield from '/royal_enfiled.avif'
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Calendar, Link2, CheckCircle } from 'lucide-react';
-
+import { useRef } from 'react';
 
 const logos = [
   {src: cars24 }, 
@@ -31,29 +31,67 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
+
+
 function AnimatedConnector() {
+  const ref = useRef(null);
+
   const { scrollYProgress } = useScroll({
-    offset: ['start end', 'end start'],
+    target: ref,
+    offset: ['start 70%', 'end 40%'],
   });
 
-  const scaleX = useTransform(scrollYProgress, [0.2, 0.6], [0, 1]);
+  const draw = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 w-[82%] h-px">
-      <motion.div
-        style={{ scaleX }}
-        className="
-          origin-left
-          h-full w-full
-          bg-gradient-to-r
-          from-transparent
-          via-emerald-400/40
-          to-transparent
-        "
-      />
+    <div
+      ref={ref}
+      className="absolute inset-0 pointer-events-none hidden md:block"
+    >
+      <svg
+        viewBox="0 0 1000 200"
+        preserveAspectRatio="none"
+        className="w-full h-full"
+      >
+        {/* 1 → 2 */}
+        <motion.line
+          x1="180"
+          y1="100"
+          x2="500"
+          y2="100"
+          stroke="url(#grad)"
+          strokeWidth="0.5"
+          strokeLinecap="round"
+          pathLength="1"
+          style={{ pathLength: draw }}
+        />
+
+        {/* 2 → 3 */}
+        <motion.line
+          x1="500"
+          y1="100"
+          x2="820"
+          y2="100"
+          stroke="url(#grad)"
+          strokeWidth="0.5"
+          strokeLinecap="round"
+          pathLength="1"
+          style={{ pathLength: draw }}
+        />
+
+        <defs>
+          <linearGradient id="grad" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#22c55e" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.4" />
+          </linearGradient>
+        </defs>
+      </svg>
     </div>
   );
 }
+
+
+
 
   function StepCard({ title, desc, icon: Icon, depth }) {
   const { scrollYProgress } = useScroll({
@@ -210,7 +248,7 @@ export default function Landing() {
             className="flex items-center gap-20"
             animate={{ x: ['0%', '-100%'] }}
             transition={{
-              duration: 40,
+              duration: 20,
               ease: 'linear',
               repeat: Infinity,
             }}
