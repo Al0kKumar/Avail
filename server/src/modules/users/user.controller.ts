@@ -20,3 +20,29 @@ export const getUserByPublicSlug = asyncHandler(
     });
   }
 );
+
+
+
+export const getMe = asyncHandler(
+  async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const user = await User.findById(req.user.userId).select(
+      '_id name email publicSlug timezone'
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      publicSlug: user.publicSlug,
+      timezone: user.timezone,
+    });
+  }
+);

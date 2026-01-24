@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
 import { startOfDay, endOfDay } from 'date-fns';
 import { fromZonedTime } from 'date-fns-tz';
-
 import { Availability } from './availability.model.js';
 import { Booking } from '../bookings/booking.model.js';
 import { asyncHandler } from '../../common/asyncHandler.js';
@@ -11,12 +10,24 @@ import { generateSlots } from '../../common/slotGenerator.js';
  * POST /availability
  * Host sets availability rules
  */
-export const setAvailability = asyncHandler(
-  async (req: Request, res: Response) => {
-    const availability = await Availability.create(req.body);
-    res.status(201).json(availability);
-  }
-);
+export const setAvailability = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user!.userId;
+  const { rules } = req.body;
+
+  console.log('rules is this :  ', rules)
+
+  await Availability.deleteMany({ userId });
+
+  const docs = rules.map((r:any) => ({
+    ...r,
+    userId,
+  }));
+
+  await Availability.insertMany(docs);
+
+  res.json({ success: true });
+});
+
 
 /**
  * GET /availability/public/:userId?date=YYYY-MM-DD&tz=Asia/Kolkata
