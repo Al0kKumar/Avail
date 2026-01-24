@@ -21,10 +21,10 @@ const logos = [
   {src: dropbox, dark: true}, 
   {src: royal_enfield},
   {src: loreal}, 
-  {src: noise, dark: true},
   {src: snapdeal, dark: true},
   {src: razorpay},
   {src: matrimoney},
+  {src: noise, dark: true}
 ];
 
 const fadeUp = {
