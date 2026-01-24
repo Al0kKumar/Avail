@@ -24,7 +24,6 @@ const logos = [
   {src: snapdeal, dark: true},
   {src: razorpay},
   {src: matrimoney},
-  {src: noise, dark: true}
 ];
 
 const fadeUp = {
