@@ -10,6 +10,8 @@ const envSchema = z.object({
   GOOGLE_CLIENT_SECRET:z.string(),
   JWT_SECRET: z.string().min(1),
   JWT_EXPIRES_IN: z.string().default('7d'),
+  EMAIL_FROM: z.string(),
+  EMAIL_PASSWORD: z.string()
 });
 
 

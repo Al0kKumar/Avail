@@ -1,12 +1,12 @@
 import type { Request, Response } from 'express';
-import mongoose from 'mongoose';
 import { fromZonedTime } from 'date-fns-tz';
-import { startOfDay, endOfDay } from 'date-fns';
+import { format } from 'date-fns';
 
 import { Booking } from './booking.model.js';
-import { Availability } from '../availability/availability.model.js';
+import { User } from '../users/user.model.js';
+import { sendEmail } from '../../services/email/email.service.js';
+import { bookingConfirmedEmail } from '../../services/email/templates/bookingConfirmed.js';
 import { asyncHandler } from '../../common/asyncHandler.js';
-import { generateSlots } from '../../common/slotGenerator.js';
 import type { AuthRequest } from '../../common/types.js';
 
 
@@ -21,8 +21,7 @@ export const createBooking = asyncHandler(
       guestTimezone,
     } = req.body;
 
-    // 1️⃣ Basic validation
-    if (!hostUserId || !startTimeUTC || !endTimeUTC) {
+    if (!hostUserId || !startTimeUTC || !endTimeUTC || !guestEmail) {
       return res.status(400).json({
         message: 'Missing required booking fields',
       });
@@ -32,12 +31,10 @@ export const createBooking = asyncHandler(
     const end = new Date(endTimeUTC);
 
     if (start >= end) {
-      return res.status(400).json({
-        message: 'Invalid time range',
-      });
+      return res.status(400).json({ message: 'Invalid time range' });
     }
 
-    // 2️⃣ COLLISION CHECK (CRITICAL)
+    /* 🔒 Collision check */
     const conflict = await Booking.findOne({
       hostUserId,
       status: 'confirmed',
@@ -51,7 +48,14 @@ export const createBooking = asyncHandler(
       });
     }
 
-    // 3️⃣ Create booking
+    /* 👤 Fetch host */
+    const host = await User.findById(hostUserId);
+
+    if (!host) {
+      return res.status(404).json({ message: 'Host not found' });
+    }
+
+    /* 💾 Save booking */
     const booking = await Booking.create({
       hostUserId,
       guestName,
@@ -62,15 +66,49 @@ export const createBooking = asyncHandler(
       status: 'confirmed',
     });
 
+    /* 🕒 Format times for email (guest timezone) */
+    const zonedStart = fromZonedTime(start, guestTimezone);
+    const zonedEnd = fromZonedTime(end, guestTimezone);
+
+    const date = format(zonedStart, 'PPP');
+    const startTime = format(zonedStart, 'p');
+    const endTime = format(zonedEnd, 'p');
+
+    /* 📧 Emails (non-blocking, safe) */
+    try {
+      await sendEmail({
+        to: guestEmail,
+        subject: 'Your booking is confirmed',
+        html: bookingConfirmedEmail({
+          guestName,
+          hostName: host.name,
+          date,
+          startTime,
+          endTime,
+        }),
+      });
+
+      await sendEmail({
+        to: host.email || "",
+        subject: 'New booking received',
+        html: `<p>You have a new booking from <b>${guestName}</b>.</p>`,
+      });
+    } catch (err) {
+      console.error('Email sending failed:', err);
+    }
+
     res.status(201).json(booking);
   }
 );
 
+/* ------------------------------------------------ */
+/* CANCEL BOOKING */
+/* ------------------------------------------------ */
 
 export const cancelBooking = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const { bookingId } = req.params;
-    const userId = req.user.userId; // from auth middleware
+    const userId = req.user.userId;
 
     const booking = await Booking.findById(bookingId);
 
@@ -78,23 +116,26 @@ export const cancelBooking = asyncHandler(
       return res.status(404).json({ message: 'Booking not found' });
     }
 
-    if (!booking.hostUserId) {
-      return res.status(400).json({ message: 'Invalid booking data' });
-    }
-
-
-    // 🔐 Only host can cancel
-    if (booking.hostUserId.toString() !== userId) {
+    if (booking.hostUserId?.toString() !== userId) {
       return res.status(403).json({ message: 'Not allowed' });
     }
 
-    // Already cancelled
     if (booking.status === 'cancelled') {
-      return res.status(400).json({ message: 'Booking already cancelled' });
+      return res.status(400).json({ message: 'Already cancelled' });
     }
 
     booking.status = 'cancelled';
     await booking.save();
+
+    try {
+      await sendEmail({
+        to: booking.guestEmail || "",
+        subject: 'Booking cancelled',
+        html: `<p>Your booking has been cancelled.</p>`,
+      });
+    } catch (err) {
+      console.error('Cancel email failed:', err);
+    }
 
     res.json({ message: 'Booking cancelled' });
   }

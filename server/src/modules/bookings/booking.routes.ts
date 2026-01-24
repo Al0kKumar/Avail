@@ -9,7 +9,7 @@ const router = Router();
 
 router.post('/', createBooking);
 
-router.post('/:bookingId/cancel',authMiddleware, cancelBooking)
+router.patch('/:bookingId/cancel',authMiddleware, cancelBooking)
 
 router.get('/me', authMiddleware, getMyBookings);
 
