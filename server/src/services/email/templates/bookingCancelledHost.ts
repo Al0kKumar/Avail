@@ -1,12 +1,10 @@
-export const bookingConfirmedEmail = ({
+export const bookingCancelledHostEmail = ({
   guestName,
-  hostName,
   date,
   startTime,
   endTime,
 }: {
   guestName: string;
-  hostName: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -32,15 +30,11 @@ export const bookingConfirmedEmail = ({
           width:8px;
           height:8px;
           border-radius:999px;
-          background:#22c55e;
-          box-shadow:0 0 10px rgba(34,197,94,0.8);
+          background:#ef4444;
+          box-shadow:0 0 10px rgba(239,68,68,0.7);
           display:inline-block;
         "></span>
-        <span style="
-          font-weight:600;
-          font-size:16px;
-          letter-spacing:-0.02em;
-        ">
+        <span style="font-weight:600;font-size:16px;letter-spacing:-0.02em;">
           Avail
         </span>
       </div>
@@ -52,7 +46,7 @@ export const bookingConfirmedEmail = ({
         margin:0 0 12px;
         color:#ffffff;
       ">
-        Booking confirmed
+        Booking cancelled
       </h1>
 
       <p style="
@@ -61,7 +55,7 @@ export const bookingConfirmedEmail = ({
         font-size:15px;
         line-height:1.6;
       ">
-        Hi ${guestName}, your meeting has been successfully scheduled.
+        A booking on your calendar has been cancelled.
       </p>
 
       <!-- Card -->
@@ -73,8 +67,8 @@ export const bookingConfirmedEmail = ({
         margin-bottom:24px;
       ">
         <p style="margin:0 0 10px;font-size:14px;color:#9ca3af;">
-          <strong style="color:#e5e7eb;">With</strong><br/>
-          ${hostName}
+          <strong style="color:#e5e7eb;">Guest</strong><br/>
+          ${guestName}
         </p>
 
         <p style="margin:0 0 10px;font-size:14px;color:#9ca3af;">
@@ -95,14 +89,13 @@ export const bookingConfirmedEmail = ({
         line-height:1.6;
         margin:0;
       ">
-        You’re all set. If plans change, you’ll be notified automatically.
+        This time slot is now available for new bookings.
         <br /><br />
         — Avail
       </p>
 
     </div>
 
-    <!-- subtle footer -->
     <p style="
       text-align:center;
       margin-top:18px;

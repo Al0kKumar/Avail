@@ -1,4 +1,4 @@
-export const bookingConfirmedEmail = ({
+export const bookingCancelledGuestEmail = ({
   guestName,
   hostName,
   date,
@@ -32,15 +32,11 @@ export const bookingConfirmedEmail = ({
           width:8px;
           height:8px;
           border-radius:999px;
-          background:#22c55e;
-          box-shadow:0 0 10px rgba(34,197,94,0.8);
+          background:#ef4444;
+          box-shadow:0 0 10px rgba(239,68,68,0.7);
           display:inline-block;
         "></span>
-        <span style="
-          font-weight:600;
-          font-size:16px;
-          letter-spacing:-0.02em;
-        ">
+        <span style="font-weight:600;font-size:16px;letter-spacing:-0.02em;">
           Avail
         </span>
       </div>
@@ -52,7 +48,7 @@ export const bookingConfirmedEmail = ({
         margin:0 0 12px;
         color:#ffffff;
       ">
-        Booking confirmed
+        Booking cancelled
       </h1>
 
       <p style="
@@ -61,7 +57,7 @@ export const bookingConfirmedEmail = ({
         font-size:15px;
         line-height:1.6;
       ">
-        Hi ${guestName}, your meeting has been successfully scheduled.
+        Hi ${guestName}, your meeting has been cancelled.
       </p>
 
       <!-- Card -->
@@ -95,14 +91,13 @@ export const bookingConfirmedEmail = ({
         line-height:1.6;
         margin:0;
       ">
-        You’re all set. If plans change, you’ll be notified automatically.
+        If you’d like, you can book another time that works for you.
         <br /><br />
         — Avail
       </p>
 
     </div>
 
-    <!-- subtle footer -->
     <p style="
       text-align:center;
       margin-top:18px;

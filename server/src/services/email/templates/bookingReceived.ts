@@ -1,12 +1,14 @@
-export const bookingConfirmedEmail = ({
-  guestName,
+export const bookingReceivedEmail = ({
   hostName,
+  guestName,
+  guestEmail,
   date,
   startTime,
   endTime,
 }: {
-  guestName: string;
   hostName: string;
+  guestName: string;
+  guestEmail: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -36,23 +38,18 @@ export const bookingConfirmedEmail = ({
           box-shadow:0 0 10px rgba(34,197,94,0.8);
           display:inline-block;
         "></span>
-        <span style="
-          font-weight:600;
-          font-size:16px;
-          letter-spacing:-0.02em;
-        ">
+        <span style="font-weight:600;font-size:16px;">
           Avail
         </span>
       </div>
 
-      <!-- Title -->
       <h1 style="
         font-size:22px;
         font-weight:600;
         margin:0 0 12px;
         color:#ffffff;
       ">
-        Booking confirmed
+        New booking received
       </h1>
 
       <p style="
@@ -61,10 +58,9 @@ export const bookingConfirmedEmail = ({
         font-size:15px;
         line-height:1.6;
       ">
-        Hi ${guestName}, your meeting has been successfully scheduled.
+        Hi ${hostName}, you’ve received a new booking.
       </p>
 
-      <!-- Card -->
       <div style="
         background:#0b1220;
         border:1px solid rgba(255,255,255,0.08);
@@ -73,8 +69,8 @@ export const bookingConfirmedEmail = ({
         margin-bottom:24px;
       ">
         <p style="margin:0 0 10px;font-size:14px;color:#9ca3af;">
-          <strong style="color:#e5e7eb;">With</strong><br/>
-          ${hostName}
+          <strong style="color:#e5e7eb;">Guest</strong><br/>
+          ${guestName} (${guestEmail})
         </p>
 
         <p style="margin:0 0 10px;font-size:14px;color:#9ca3af;">
@@ -88,21 +84,19 @@ export const bookingConfirmedEmail = ({
         </p>
       </div>
 
-      <!-- Footer -->
       <p style="
         font-size:13px;
         color:#6b7280;
         line-height:1.6;
         margin:0;
       ">
-        You’re all set. If plans change, you’ll be notified automatically.
+        You can manage this booking from your dashboard.
         <br /><br />
         — Avail
       </p>
 
     </div>
 
-    <!-- subtle footer -->
     <p style="
       text-align:center;
       margin-top:18px;
