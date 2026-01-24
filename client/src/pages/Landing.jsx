@@ -18,13 +18,13 @@ import { useRef } from 'react';
 const logos = [
   {src: cars24 }, 
   {src: doordash}, 
-  {src: dropbox}, 
+  {src: dropbox, dark: true}, 
+  {src: royal_enfield},
   {src: loreal}, 
   {src: noise, dark: true},
   {src: snapdeal, dark: true},
   {src: razorpay},
   {src: matrimoney},
-  {src: royal_enfield}
 ];
 
 const fadeUp = {
@@ -258,7 +258,7 @@ export default function Landing() {
               className="
                 mx-10
                 flex items-center justify-center
-                opacity-80
+                opacity-100
                 hover:opacity-100
                 transition
               "
