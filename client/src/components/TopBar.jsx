@@ -40,6 +40,7 @@ export default function Topbar({ onMenuClick }) {
         className="
           px-4 py-2
           rounded-xl
+          cursor-pointer
           text-sm font-medium
           text-white/70
           border border-white/10

@@ -12,6 +12,7 @@ import snapdeal from '/sanpdeal.png'
 import royal_enfield from '/royal_enfiled.avif'
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Calendar, Link2, CheckCircle } from 'lucide-react';
+import Marquee from 'react-fast-marquee';
 import { useRef } from 'react';
 
 const logos = [
@@ -224,115 +225,111 @@ export default function Landing() {
 
 
 
-      {/* TRUSTED BY */}
-      <section className="relative py-24 overflow-hidden">
-        {/* soft divider glow */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(to bottom, transparent, rgba(34,197,94,0.08), transparent)',
-            }}
-          />
-        </div>
 
-        <div className="relative max-w-6xl mx-auto px-8">
-          <p className="text-center text-sm tracking-wide text-white/50 mb-10">
-            TRUSTED BY TEAMS AT
-          </p>
 
-          {/* marquee */}
-          <div className="relative overflow-hidden">
-                      <motion.div
-            className="flex items-center gap-20"
-            animate={{ x: ['0%', '-100%'] }}
-            transition={{
-              duration: 10,
-              ease: 'linear',
-              repeat: Infinity,
-            }}
-          >
-            {[...logos, ...logos].map((logo, i) => (
-              <div
-                key={i}
-                className="
-                  flex items-center justify-center
-                  min-w-[160px]
-                  opacity-85
+    {/* TRUSTED BY */}
+    <section className="relative py-24 overflow-hidden">
+      {/* soft divider glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to bottom, transparent, rgba(34,197,94,0.08), transparent)',
+          }}
+        />
+      </div>
+
+      <div className="relative max-w-6xl mx-auto px-6">
+        <p className="text-center text-sm tracking-wide text-white/50 mb-10">
+          TRUSTED BY TEAMS AT
+        </p>
+
+        <Marquee
+          speed={45}              // 👈 consistent across devices
+          pauseOnHover
+          pauseOnClick
+          gradient={false}
+          className="overflow-hidden"
+        >
+          {logos.map((logo, i) => (
+            <div
+              key={i}
+              className="
+                mx-10
+                flex items-center justify-center
+                opacity-80
+                hover:opacity-100
+                transition
+              "
+            >
+              <img
+                src={logo.src}
+                alt="brand logo"
+                className={`
+                  h-7 md:h-8
+                  object-contain
                   transition
-                  duration-300
-                  hover:opacity-100
-                "
-              >
-                <img
-                  src={logo.src}
-                  alt="brand logo"
-                  className={`
-                    h-8 object-contain
-                    transition duration-300
-                    ${
-                      logo.dark
-                        ? 'brightness-150 contrast-110'
-                        : ''
-                    }
-                    hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.35)]
-                  `}
-                />
-              </div>
-            ))}
-          </motion.div>
-
-          </div>
-        </div>
-      </section>
+                  ${
+                    logo.dark
+                      ? 'brightness-150 contrast-110'
+                      : ''
+                  }
+                  hover:drop-shadow-[0_0_10px_rgba(34,197,94,0.35)]
+                `}
+              />
+            </div>
+          ))}
+        </Marquee>
+      </div>
+    </section>
 
 
 
 
 
 
-{/* HOW IT WORKS */}
-<section className="relative max-w-6xl mx-auto px-8 py-36 overflow-hidden">
-  {/* ambient wash */}
-  <div className="absolute inset-0 pointer-events-none">
-    <div
-      className="absolute inset-0"
-      style={{
-        background:
-          'radial-gradient(55% 45% at 50% 50%, rgba(34,197,94,0.12), transparent 70%)',
-      }}
-    />
-  </div>
+    {/* HOW IT WORKS */}
+    <section className="relative max-w-6xl mx-auto px-8 py-36 overflow-hidden">
+      {/* ambient wash */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(55% 45% at 50% 50%, rgba(34,197,94,0.12), transparent 70%)',
+          }}
+        />
+      </div>
 
-  {/* SCROLL-ANIMATED CONNECTOR */}
-  <AnimatedConnector />
+      {/* SCROLL-ANIMATED CONNECTOR */}
+      <AnimatedConnector />
 
-  <div className="relative grid md:grid-cols-3 gap-14 text-center">
-    {[
-      {
-        title: 'Connect',
-        desc: 'Sign in with Google and define your availability.',
-        icon: Calendar,
-        depth: -20,
-      },
-      {
-        title: 'Share',
-        desc: 'Send your booking link to anyone, instantly.',
-        icon: Link2,
-        depth: -35,
-      },
-      {
-        title: 'Meet',
-        desc: 'They pick a time — you’re automatically booked.',
-        icon: CheckCircle,
-        depth: -20,
-      },
-    ].map((item, i) => (
-      <StepCard key={i} {...item} />
-    ))}
-  </div>
-</section>
+      <div className="relative grid md:grid-cols-3 gap-14 text-center">
+        {[
+          {
+            title: 'Connect',
+            desc: 'Sign in with Google and define your availability.',
+            icon: Calendar,
+            depth: -20,
+          },
+          {
+            title: 'Share',
+            desc: 'Send your booking link to anyone, instantly.',
+            icon: Link2,
+            depth: -35,
+          },
+          {
+            title: 'Meet',
+            desc: 'They pick a time — you’re automatically booked.',
+            icon: CheckCircle,
+            depth: -20,
+          },
+        ].map((item, i) => (
+          <StepCard key={i} {...item} />
+        ))}
+      </div>
+    </section>
 
 
 

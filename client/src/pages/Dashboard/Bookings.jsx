@@ -31,7 +31,7 @@ export default function Bookings() {
     fetchBookings();
   }, []);
 
-  /* ---------------- DERIVED STATE ---------------- */
+  /* ---------------- DERIVED ---------------- */
 
   const now = new Date();
 
@@ -49,15 +49,13 @@ export default function Bookings() {
     ? cancelledBookings
     : upcomingBookings;
 
-  /* ---------------- ACTIONS ---------------- */
+  /* ---------------- ACTION ---------------- */
 
   const handleCancel = async bookingId => {
     try {
       setCancellingId(bookingId);
-
       await cancelBooking(bookingId);
 
-      // optimistic update
       setBookings(prev =>
         prev.map(b =>
           b._id === bookingId
@@ -66,17 +64,10 @@ export default function Bookings() {
         )
       );
 
-      setToast({
-        type: 'success',
-        message: 'Booking cancelled',
-      });
-
+      setToast({ type: 'success', message: 'Booking cancelled' });
       setTimeout(() => setToast(null), 1500);
-    } catch (err) {
-      setToast({
-        type: 'error',
-        message: 'Failed to cancel booking',
-      });
+    } catch {
+      setToast({ type: 'error', message: 'Failed to cancel booking' });
       setTimeout(() => setToast(null), 2000);
     } finally {
       setCancellingId(null);
@@ -108,7 +99,7 @@ export default function Bookings() {
       </p>
 
       {/* FILTER TABS */}
-      <div className="mt-6 flex gap-8 text-sm">
+      <div className="mt-6 flex gap-6 text-sm">
         {[
           { label: 'Upcoming', active: !showCancelled, onClick: () => setShowCancelled(false) },
           { label: 'Cancelled', active: showCancelled, onClick: () => setShowCancelled(true) },
@@ -116,39 +107,23 @@ export default function Bookings() {
           <button
             key={tab.label}
             onClick={tab.onClick}
-            className={`
-              relative
-              pb-1
-              cursor-pointer
-              transition-colors
-              ${
-                tab.active
-                  ? 'text-white'
-                  : 'text-white/40 hover:text-white/70'
-              }
-            `}
+            className={`relative pb-1 transition ${
+              tab.active
+                ? 'text-white'
+                : 'text-white/40 hover:text-white/70'
+            }`}
           >
             {tab.label}
-
-            {/* animated underline */}
             <span
-              className={`
-                absolute left-0 bottom-0
-                h-[2px] w-full
+              className={`absolute left-0 bottom-0 h-[2px] w-full
                 bg-gradient-to-r from-emerald-400 to-emerald-500
-                transform origin-left
-                transition-transform duration-300 ease-out
-                ${
-                  tab.active
-                    ? 'scale-x-100'
-                    : 'scale-x-0 group-hover:scale-x-100'
-                }
+                transition-transform duration-300 origin-left
+                ${tab.active ? 'scale-x-100' : 'scale-x-0'}
               `}
             />
           </button>
         ))}
       </div>
-
 
       {/* LIST */}
       <div className="mt-8">
@@ -167,8 +142,7 @@ export default function Bookings() {
         {!loading && visibleBookings.length > 0 && (
           <div className="space-y-4">
             {visibleBookings.map(booking => {
-              const isCancelling =
-                cancellingId === booking._id;
+              const isCancelling = cancellingId === booking._id;
 
               return (
                 <motion.div
@@ -181,8 +155,11 @@ export default function Bookings() {
                     bg-white/5
                     backdrop-blur
                     border border-white/10
-                    p-6
-                    flex justify-between items-center
+                    p-5
+                    flex flex-col md:flex-row
+                    gap-4
+                    md:items-center
+                    md:justify-between
                   "
                 >
                   {/* Guest */}
@@ -196,7 +173,7 @@ export default function Bookings() {
                   </div>
 
                   {/* Time */}
-                  <div className="text-right">
+                  <div className="md:text-right">
                     <p className="text-white">
                       {formatDate(booking.startTimeUTC)}
                     </p>
@@ -207,7 +184,7 @@ export default function Bookings() {
                   </div>
 
                   {/* Status + Action */}
-                  <div className="flex items-center gap-4 min-w-[140px] justify-end">
+                  <div className="flex items-center gap-4">
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
                         booking.status === 'confirmed'
@@ -221,20 +198,12 @@ export default function Bookings() {
                     {booking.status === 'confirmed' && (
                       <button
                         disabled={isCancelling}
-                        onClick={() =>
-                          handleCancel(booking._id)
-                        }
-                        className={`
-                          flex items-center gap-2
-                          cursor-pointer
-                          text-sm
-                          transition
-                          ${
-                            isCancelling
-                              ? 'text-white/40 cursor-not-allowed'
-                              : 'text-red-400 hover:text-red-300'
-                          }
-                        `}
+                        onClick={() => handleCancel(booking._id)}
+                        className={`flex items-center gap-2 text-sm transition ${
+                          isCancelling
+                            ? 'text-white/40 cursor-not-allowed'
+                            : 'text-red-400 hover:text-red-300'
+                        }`}
                       >
                         {isCancelling && (
                           <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

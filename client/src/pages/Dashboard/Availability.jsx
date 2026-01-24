@@ -61,9 +61,7 @@ export default function Availability() {
         .filter(d => d.enabled)
         .map(d => {
           if (d.start >= d.end) {
-            throw new Error(
-              `Invalid time range for ${d.day}`
-            );
+            throw new Error(`Invalid time range for ${d.day}`);
           }
 
           return {
@@ -100,11 +98,7 @@ export default function Availability() {
 
   return (
     <DashboardLayout>
-      <Toast
-        show={!!toast}
-        type={toast?.type}
-        message={toast?.message}
-      />
+      <Toast show={!!toast} type={toast?.type} message={toast?.message} />
 
       {/* Header */}
       <h1 className="text-3xl font-semibold tracking-tight text-white">
@@ -120,12 +114,15 @@ export default function Availability() {
           <div
             key={day.day}
             className="
-              flex items-center justify-between
               rounded-xl
               bg-white/5
               backdrop-blur
               border border-white/10
-              px-6 py-4
+              px-5 py-4
+              flex flex-col md:flex-row
+              gap-4
+              md:items-center
+              md:justify-between
             "
           >
             {/* Day + toggle */}
@@ -155,7 +152,7 @@ export default function Availability() {
             </div>
 
             {/* Time selectors */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 w-full md:w-auto">
               <input
                 type="time"
                 value={day.start}
@@ -164,11 +161,12 @@ export default function Availability() {
                   updateTime(index, 'start', e.target.value)
                 }
                 className="
+                  w-full md:w-auto
                   bg-white/10
                   text-white
                   text-sm
                   rounded-lg
-                  px-3 py-1.5
+                  px-3 py-2
                   border border-white/10
                   disabled:opacity-40
                 "
@@ -184,11 +182,12 @@ export default function Availability() {
                   updateTime(index, 'end', e.target.value)
                 }
                 className="
+                  w-full md:w-auto
                   bg-white/10
                   text-white
                   text-sm
                   rounded-lg
-                  px-3 py-1.5
+                  px-3 py-2
                   border border-white/10
                   disabled:opacity-40
                 "
@@ -203,11 +202,7 @@ export default function Availability() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="
-            relative
-            min-w-[200px]
-            cursor-pointer
-          "
+          className="relative min-w-[200px]"
         >
           {saving && (
             <span className="absolute left-4 h-4 w-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
