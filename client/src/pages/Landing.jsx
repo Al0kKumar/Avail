@@ -248,7 +248,7 @@ export default function Landing() {
             className="flex items-center gap-20"
             animate={{ x: ['0%', '-100%'] }}
             transition={{
-              duration: 20,
+              duration: 10,
               ease: 'linear',
               repeat: Infinity,
             }}

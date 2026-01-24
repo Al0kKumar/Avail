@@ -22,6 +22,7 @@ export default function Sidebar({ open, onClose }) {
         className={`
           fixed md:static z-40
           top-0 left-0 
+          h-screen md:h-auto 
           w-64
           bg-white/5 backdrop-blur-xl
           border-r border-white/10
