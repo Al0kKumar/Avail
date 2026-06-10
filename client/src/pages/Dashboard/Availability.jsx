@@ -202,7 +202,7 @@ export default function Availability() {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="relative min-w-[200px]"
+          className="relative min-w-[200px] cursor-pointer"
         >
           {saving && (
             <span className="absolute left-4 h-4 w-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
