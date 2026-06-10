@@ -107,7 +107,7 @@ export default function Bookings() {
           <button
             key={tab.label}
             onClick={tab.onClick}
-            className={`relative pb-1 transition ${
+            className={`relative pb-1 transition cursor-pointer ${
               tab.active
                 ? 'text-white'
                 : 'text-white/40 hover:text-white/70'
@@ -202,7 +202,7 @@ export default function Bookings() {
                         className={`flex items-center gap-2 text-sm transition ${
                           isCancelling
                             ? 'text-white/40 cursor-not-allowed'
-                            : 'text-red-400 hover:text-red-300'
+                            : 'text-red-400 hover:text-red-300 cursor-pointer'
                         }`}
                       >
                         {isCancelling && (
