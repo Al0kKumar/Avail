@@ -76,36 +76,36 @@ export const createBooking = asyncHandler(
     const startTime = format(zonedStart, 'p');
     const endTime = format(zonedEnd, 'p');
 
-    /* 📧 Emails (non-blocking, safe) */
-    try {
-      await sendEmail({
-        to: guestEmail,
-        subject: 'Your booking is confirmed',
-        html: bookingConfirmedEmail({
-          guestName,
-          hostName: host.name || "",
-          date,
-          startTime,
-          endTime,
-        }),
-      });
+    // /* 📧 Emails (non-blocking, safe) */
+    // try {
+    //   await sendEmail({
+    //     to: guestEmail,
+    //     subject: 'Your booking is confirmed',
+    //     html: bookingConfirmedEmail({
+    //       guestName,
+    //       hostName: host.name || "",
+    //       date,
+    //       startTime,
+    //       endTime,
+    //     }),
+    //   });
 
-      await sendEmail({
-        to: host.email || '',
-        subject: 'New booking received',
-        html: bookingReceivedEmail({
-          hostName: host.name || 'there',
-          guestName: guestName || 'Guest',
-          guestEmail: guestEmail,
-          date,
-          startTime,
-          endTime,
-        }),
-      });
+    //   await sendEmail({
+    //     to: host.email || '',
+    //     subject: 'New booking received',
+    //     html: bookingReceivedEmail({
+    //       hostName: host.name || 'there',
+    //       guestName: guestName || 'Guest',
+    //       guestEmail: guestEmail,
+    //       date,
+    //       startTime,
+    //       endTime,
+    //     }),
+    //   });
 
-    } catch (err) {
-      console.error('Email sending failed:', err);
-    }
+    // } catch (err) {
+    //   console.error('Email sending failed:', err);
+    // }
 
     res.status(201).json(booking);
   }
@@ -153,32 +153,32 @@ export const cancelBooking = asyncHandler(
     const endTime = format(zonedEnd, 'p');
 
     /* 📧 Emails (safe, non-blocking) */
-    try {
-      await sendEmail({
-        to: booking.guestEmail || '',
-        subject: 'Your booking has been cancelled',
-        html: bookingCancelledGuestEmail({
-          guestName: booking.guestName || 'there',
-          hostName: host.name || "",
-          date,
-          startTime,
-          endTime,
-        }),
-      });
+    // try {
+    //   await sendEmail({
+    //     to: booking.guestEmail || '',
+    //     subject: 'Your booking has been cancelled',
+    //     html: bookingCancelledGuestEmail({
+    //       guestName: booking.guestName || 'there',
+    //       hostName: host.name || "",
+    //       date,
+    //       startTime,
+    //       endTime,
+    //     }),
+    //   });
 
-      await sendEmail({
-      to: host.email || '',
-      subject: 'Booking cancelled',
-      html: bookingCancelledHostEmail({
-        guestName: booking.guestName || '',
-        date,
-        startTime,
-        endTime,
-      }),
-    });
-    } catch (err) {
-      console.error('Cancel email failed:', err);
-    }
+    //   await sendEmail({
+    //   to: host.email || '',
+    //   subject: 'Booking cancelled',
+    //   html: bookingCancelledHostEmail({
+    //     guestName: booking.guestName || '',
+    //     date,
+    //     startTime,
+    //     endTime,
+    //   }),
+    // });
+    // } catch (err) {
+    //   console.error('Cancel email failed:', err);
+    // }
 
     res.json({ message: 'Booking cancelled' });
   }
