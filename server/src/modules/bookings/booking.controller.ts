@@ -77,6 +77,8 @@ export const createBooking = asyncHandler(
     const endTime = format(zonedEnd, 'p');
 
     /* 📧 Emails (non-blocking, safe) */
+    console.log('STARTING EMAIL SEND');
+    
     try {
       await sendEmail({
         to: guestEmail,

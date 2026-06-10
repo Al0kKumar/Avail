@@ -1,4 +1,4 @@
-import { resend } from "./resend.js";
+import { resend } from './resend.js';
 
 type SendEmailArgs = {
   to: string;
@@ -14,6 +14,11 @@ export const sendEmail = async ({
   const recipient =
     process.env.EMAIL_OVERRIDE || to;
 
+  console.log('EMAIL ATTEMPT');
+  console.log('Original recipient:', to);
+  console.log('Actual recipient:', recipient);
+  console.log('Subject:', subject);
+
   const result = await resend.emails.send({
     from: 'onboarding@resend.dev',
     to: recipient,
@@ -21,9 +26,7 @@ export const sendEmail = async ({
     html,
   });
 
-  if (result.error) {
-    console.error('Resend error:', result.error);
-  }
+  console.log('RESEND RESULT:', JSON.stringify(result));
 
   return result;
 };
