@@ -7,7 +7,7 @@ export default function Button({
   variant = 'primary',
 }) {
   const base =
-    'px-6 py-3 rounded-lg font-medium transition-colors duration-200';
+    'px-6 py-3 rounded-lg font-medium transition-colors duration-200 cursor-pointer';
 
   const variants = {
   primary:
