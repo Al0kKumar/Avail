@@ -28,3 +28,5 @@ router.get('/test-email', async (_, res) => {
     });
   }
 });
+
+export default router;
