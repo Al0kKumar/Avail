@@ -1,60 +1,4 @@
-// import nodemailer from 'nodemailer';
-
-// import { env } from '../../config/env.js';
-
-// export const mailer = nodemailer.createTransport({
-//   service: 'gmail',
-//   auth: {
-//     user: env.EMAIL_FROM,
-//     pass: env.EMAIL_PASSWORD,
-//   },
-// });
-
-// type SendEmailArgs = {
-//   to: string;
-//   subject: string;
-//   html: string;
-// };
-
-// export const sendEmail = async ({
-//   to,
-//   subject,
-//   html,
-// }: SendEmailArgs) => {
-//   await mailer.sendMail({
-//     from: `"Avail" <${env.EMAIL_FROM}>`,
-//     to,
-//     subject,
-//     html,
-//   });
-// };
-
-
-
-
-
-
-import nodemailer from 'nodemailer';
-import { env } from '../../config/env.js';
-
-export const mailer = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: env.EMAIL_FROM,
-    pass: env.EMAIL_PASSWORD,
-  },
-  connectionTimeout: 10000,
-});
-
-mailer.verify((error, success) => {
-  if (error) {
-    console.error('SMTP VERIFY ERROR:', error);
-  } else {
-    console.log('SMTP READY');
-  }
-});
+import { resend } from "./resend.js";
 
 type SendEmailArgs = {
   to: string;
@@ -67,16 +11,19 @@ export const sendEmail = async ({
   subject,
   html,
 }: SendEmailArgs) => {
-  console.log('Sending email to:', to);
+  const recipient =
+    process.env.EMAIL_OVERRIDE || to;
 
-  const result = await mailer.sendMail({
-    from: `"Avail" <${env.EMAIL_FROM}>`,
-    to,
+  const result = await resend.emails.send({
+    from: 'onboarding@resend.dev',
+    to: recipient,
     subject,
     html,
   });
 
-  console.log('Email sent:', result.messageId);
+  if (result.error) {
+    console.error('Resend error:', result.error);
+  }
 
   return result;
 };
